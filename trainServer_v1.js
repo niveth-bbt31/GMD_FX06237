@@ -92,16 +92,17 @@ app.get('/speed/:item', (req, res)=> {
       var upspd = tstat.speed + 50;
       if(upspd >= 255){
         tstat.speed = 255;
-      }else if(upspd <=149){
-        tstat.speed = 150;
+      }else if(upspd <=159){
+        tstat.speed = 160;
       }else{tstat.speed = upspd;}
     }else if(req.params.item == 'down'){
       var lowspd = tstat.speed - 50;
-      if(lowspd <= 150){
+      if(lowspd <= 149){
         tstat.speed = 0;
       }else{tstat.speed = lowspd;}
     }
   trainStat.update(key, tstat);
+  console.log(tstat);
   return res.send(tstat);
 });
 
