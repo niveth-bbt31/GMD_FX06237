@@ -19,7 +19,6 @@ app.use((Request,Response,next)=>{
 });
 
 const trainStat=new FlatDB.Collection('trains', {
-  runStatus: 0,
   speed: 0,
   headLamp: 0,
   comp1light: 0,
@@ -39,8 +38,7 @@ const bootHandler = async function (){
   trainStat.reset();
   keys=trainStat.add([
     {
-      runStatus: 0,
-      speed: 80,
+      speed: 0,
       headLamp: 160,
       comp1light: 0,
       comp2light: 0,
@@ -73,10 +71,6 @@ app.get('/status', (req, res)=> {
   let tstat=null;
   try {
     tstat=trainStat.get(key);
-    if(tstat.runStatus > 1){
-      tstat.runStatus = 1;
-      trainStat.update(key, tstat);
-    }
   } catch (error) {
     bootHandler();
   }
@@ -84,6 +78,7 @@ app.get('/status', (req, res)=> {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
+  console.log(trainStat.get(key));
         return res.send(trainStat.get(key));
 });
 
@@ -93,20 +88,17 @@ app.get('/speed/:item', (req, res)=> {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
   let tstat=trainStat.get(key);
-  if(tstat.runStatus >= 1){
-    tstat.runStatus = 1;
     if(req.params.item == 'up'){
-      var upspd = tstat.speed + 20;
+      var upspd = tstat.speed + 50;
       if(upspd >= 255){
         tstat.speed = 255;
       }else{tstat.speed = upspd;}
     }else if(req.params.item == 'down'){
-      var lowspd = tstat.speed - 20;
-      if(lowspd <= 160){
-        tstat.speed = 160;
+      var lowspd = tstat.speed - 50;
+      if(lowspd <= 0){
+        tstat.speed = 0;
       }else{tstat.speed = lowspd;}
     }
-  }
   trainStat.update(key, tstat);
   return res.send(tstat);
 });
@@ -117,24 +109,10 @@ app.get('/set/:item', (req, res)=> {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
   let tstat=trainStat.get(key);
-  if(tstat.runStatus > 1){
-    tstat.runStatus = 1;
-  }
   if(req.params.item == 'speed'){
-    if(tstat.runStatus == 1){
-      if(req.query.value >=160 && req.query.value <=255){
+      if(req.query.value >=0 && req.query.value <=255){
         tstat.speed=Number(req.query.value);
       }
-    }
-  }
-  if(req.params.item == 'runStatus'){
-    if(req.query.value == 0){
-      tstat.speed = 100;
-      tstat.runStatus = 0;
-    }else if(req.query.value == 1 && tstat.runStatus == 0){
-      tstat.speed = 160;
-      tstat.runStatus = 2;
-    }
   }
   if(req.params.item == 'headLamp'){
     if(req.query.value == 0){
