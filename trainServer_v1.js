@@ -39,7 +39,7 @@ const bootHandler = async function (){
   keys=trainStat.add([
     {
       speed: 0,
-      headLamp: 120,
+      headLamp: 90,
       comp1light: 0,
       comp2light: 0,
       comp3light: 0,
@@ -118,13 +118,13 @@ app.get('/set/:item', (req, res)=> {
   }
   if(req.params.item == 'headLamp'){
     if(req.query.value == 0){
-        tstat.headLamp = 120;
+        tstat.headLamp = 90;
     }else{tstat.headLamp = 255;}
   }
   if(req.params.item == 'comp1light'){
     if(req.query.value == 0){
         tstat.comp1light = 0;
-    }else if(req.query.value == 1){tstat.comp1light = 160;}else{ tstat.comp1light = 255;}
+    }else if(req.query.value == 1){tstat.comp1light = 90;}else{ tstat.comp1light = 255;}
   }
   if(req.params.item == 'comp2light'){
     if(req.query.value == 0){
